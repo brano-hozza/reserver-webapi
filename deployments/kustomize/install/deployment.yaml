@@ -13,7 +13,7 @@ spec:
           pod: reserver-webapi-label
       spec:
         containers:
-        - name: reserver-wl-webapi-container
+        - name: reserver-webapi-container
           image: hozza/reserver-webapi:latest
           imagePullPolicy: Always
           ports:
