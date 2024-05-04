@@ -5,6 +5,7 @@ import (
 
 	"github.com/brano-hozza/reserver-webapi/internal/db_service"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 // CreateExamination - Create new examination
@@ -44,6 +45,10 @@ func (this *implExaminationReservationAPI) CreateExamination(ctx *gin.Context) {
 				"error":   err.Error(),
 			})
 		return
+	}
+
+	if examination.Id == "@new" {
+		examination.Id = uuid.New().String()
 	}
 
 	err = db.CreateDocument(ctx, examination.Id, &examination)
