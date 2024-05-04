@@ -289,5 +289,70 @@ func (this *implRoomReservationAPI) GetRooms(ctx *gin.Context) {
 
 // UpdateReservation - Update reservation
 func (this *implRoomReservationAPI) UpdateReservation(ctx *gin.Context) {
-	ctx.AbortWithStatus(http.StatusNotImplemented)
+	value, exists := ctx.Get("reservation_service")
+	if !exists {
+		ctx.JSON(
+			http.StatusInternalServerError,
+			gin.H{
+				"status":  "Internal Server Error",
+				"message": "db not found",
+				"error":   "db not found",
+			})
+		return
+	}
+
+	db, ok := value.(db_service.DbService[RoomReservation])
+	if !ok {
+		ctx.JSON(
+			http.StatusInternalServerError,
+			gin.H{
+				"status":  "Internal Server Error",
+				"message": "db context is not of required type",
+				"error":   "cannot cast db context to db_service.DbService",
+			})
+		return
+	}
+
+	reservation := RoomReservation{}
+	err := ctx.BindJSON(&reservation)
+	if err != nil {
+		ctx.JSON(
+			http.StatusBadRequest,
+			gin.H{
+				"status":  "Bad Request",
+				"message": "Invalid request body",
+				"error":   err.Error(),
+			})
+		return
+	}
+
+	err = db.UpdateDocument(ctx, reservation.Id, &reservation)
+	if err != nil {
+		switch err {
+		case db_service.ErrNotFound:
+			ctx.JSON(
+				http.StatusNotFound,
+				gin.H{
+					"status":  "Not Found",
+					"message": "Reservation not found",
+					"error":   err.Error(),
+				},
+			)
+		default:
+			ctx.JSON(
+				http.StatusBadGateway,
+				gin.H{
+					"status":  "Bad Gateway",
+					"message": "Failed to update reservation in database",
+					"error":   err.Error(),
+				},
+			)
+		}
+		return
+	}
+
+	ctx.JSON(
+		http.StatusOK,
+		reservation,
+	)
 }

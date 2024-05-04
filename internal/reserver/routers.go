@@ -23,6 +23,11 @@ func AddRoutes(engine *gin.Engine) {
   }
   
   {
+    api := newExaminationReservationAPI()
+    api.addRoutes(group)
+  }
+  
+  {
     api := newRoomReservationAPI()
     api.addRoutes(group)
   }

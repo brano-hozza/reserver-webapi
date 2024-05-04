@@ -12,7 +12,7 @@ info:
     name: CC BY 4.0
     url: "https://creativecommons.org/licenses/by/4.0/"
 tags:
-  - name: ambulanceReservation
+  - name: examinationReservation
     description: Ambulance reservation API
   - name: roomReservation
     description: Room reservation API
@@ -192,6 +192,123 @@ paths:
           description: Reservation deleted
         "404":
           description: Reservation not found
+  "/examination":
+    get:
+      tags:
+        - examinationReservation
+      summary: Provides the list of current examinations
+      operationId: getExaminations
+      description: Use this method to get list of all examinations
+      responses:
+        "200":
+          description: value of the examinations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Examination"
+              examples:
+                response:
+                  $ref: "#/components/examples/ExaminationListExample"
+    post:
+      tags:
+        - examinationReservation
+      summary: Create new examination
+      operationId: createExamination
+      description: Use this method to create new examination
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Examination"
+      responses:
+        "201":
+          description: Examination created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Examination"
+              examples:
+                response:
+                  $ref: "#/components/examples/ExaminationExample"
+    
+  "/examination/{id}":
+    get:
+      tags:
+        - examinationReservation
+      summary: Provides the examination by id
+      operationId: getExaminationById
+      description: Use this method to get examination by id
+      parameters:
+        - name: id
+          in: path
+          description: ID of the examination
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: value of the examination
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Examination"
+              examples:
+                response:
+                  $ref: "#/components/examples/ExaminationExample"
+        "404":
+          description: Examination not found
+    put:
+      tags:
+        - examinationReservation
+      summary: Update examination
+      operationId: updateExamination
+      description: Use this method to update examination
+      parameters:
+        - name: id
+          in: path
+          description: ID of the examination
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Examination"
+      responses:
+        "200":
+          description: Examination updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Examination"
+              examples:
+                response:
+                  $ref: "#/components/examples/ExaminationExample"
+        "404":
+          description: Examination not found
+    delete:
+      tags:
+        - examinationReservation
+      summary: Delete examination
+      operationId: deleteExamination
+      description: Use this method to delete examination
+      parameters:
+        - name: id
+          in: path
+          description: ID of the examination
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Examination deleted
+        "404":
+          description: Examination not found
 components:
   schemas:
     Department:
@@ -266,6 +383,34 @@ components:
           type: string
           example: 356 - 3.posch
           description: Room number
+    Examination:
+      type: object
+      required: [ "id", "room", "department", "doctor", "patient", "datetime"]
+      properties:
+        id:
+          type: string
+          example: examination-id-1
+          description: Unique identifier of the examination
+        room:
+          type: string
+          example: room-id-1
+          description: Room ID
+        department:
+          type: string
+          example: department-id-1
+          description: ID of the department
+        doctor:
+          type: string
+          example: doctor-id-1
+          description: ID of the doctor
+        patient:
+          type: string
+          example: Janko Hruska
+          description: Name of the patient
+        datetime:
+          type: string
+          example: 2024-05-04T12:00:00
+          description: Date and time of the examination
 
   examples:
     DepartmentExample:
@@ -343,4 +488,35 @@ components:
           roomNumber: 356 - 3.posch
         - id: room-id-2
           roomNumber: 356 - 2.posch
-
+    ExaminationExample:
+      summary: Examination example
+      description: Example of examination
+      value:
+        id: examination-id-1
+        room: room-id-1
+        department: deparment-id-1
+        doctor: doctor-id-1
+        patient: Janko Hruska
+        datetime: 2024-05-04T12:00:00
+    ExaminationListExample:
+      summary: List of examinations
+      description: Example list of examinations in the hospital
+      value:
+        - id: examination-id-1
+          room: room-id-1
+          department: deparment-id-1
+          doctor: doctor-id-1
+          patient: Janko Hruska
+          datetime: 2024-05-04T12:00:00
+        - id: examination-id-2
+          room: room-id-2
+          department: deparment-id-1
+          doctor: doctor-id-2
+          patient: Majko Paradajka
+          datetime: 2024-05-04T13:00:00
+        - id: examination-id-3
+          room: room-id-3
+          department: deparment-id-2
+          doctor: doctor-id-3
+          patient: Lucinka Malicka
+          datetime: 2024-05-04T13:30:00

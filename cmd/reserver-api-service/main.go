@@ -47,11 +47,14 @@ func main() {
 	defer roomService.Disconnect(context.Background())
 	reservationService := db_service.NewMongoService[reserver.RoomReservation](db_service.MongoServiceConfig{}, "reservation")
 	defer reservationService.Disconnect(context.Background())
+	examinationService := db_service.NewMongoService[reserver.Examination](db_service.MongoServiceConfig{}, "examination")
+	defer examinationService.Disconnect(context.Background())
 	engine.Use(func(ctx *gin.Context) {
 		ctx.Set("department_service", departmentService)
 		ctx.Set("doctor_service", doctorService)
 		ctx.Set("room_service", roomService)
 		ctx.Set("reservation_service", reservationService)
+		ctx.Set("examination_service", examinationService)
 		ctx.Next()
 	})
 
